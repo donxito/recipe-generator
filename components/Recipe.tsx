@@ -10,9 +10,12 @@ recipe: RecipeType
 const Recipe: React.FC<RecipeProps> = ({ recipe }) => {
 
     return (
-        <div>
-            <h2>{recipe.label}</h2>
+        <div className="">
+            <h2 
+            className='text-xl font-semibold'
+            >{recipe.label}</h2>
             <Image 
+                className='object-cover w-full h-56 rounded-lg lg:w-64'
                 width={200} 
                 height={200} 
                 src={recipe.image} 
@@ -27,7 +30,12 @@ const Recipe: React.FC<RecipeProps> = ({ recipe }) => {
             
             {/* <h3>Instructions:</h3>
             <p>{recipe.instructions}</p> */}
-            <a href={recipe.url} target="_blank" rel="noopener noreferrer">View Recipe</a>
+            <a 
+            href={recipe.url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className='text-lg font-bold text-gray-600 hover:underline '
+            >View Recipe</a>
         </div>
 
     )

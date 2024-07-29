@@ -4,25 +4,8 @@ import { useState } from 'react';
 import fetchRecipes from '../lib/fetchRecipes';
 import Recipe from '../components/Recipe';
 import { Recipe as RecipeType } from '@/types/types';
+import SearchBar from '@/components/SearchBar';
 
-
-// interface Recipe {
-//   label: string;
-//   image: string;
-//   source: string;
-//   url: string;
-//   ingredients: {
-//     text: string;
-//     quantity: number;
-//     measure: string;
-//     food: string;
-//     weight: number;
-//     foodCategory: string;
-//     foodId: string;
-//     image: string;
-// }[];
-//   instructions: string;
-// }
 
 const RecipePage: React.FC = () => {
   const [query, setQuery] = useState<string>('');
@@ -44,24 +27,23 @@ const RecipePage: React.FC = () => {
   };
 
   return (
-    <div className=''>
-      <h1>Recipe Generator</h1>
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Enter ingredients"
-      />
-      <button onClick={searchRecipes}>Search</button>
+    <section className="bg-white">
+      <SearchBar query={query} setQuery={setQuery} searchRecipes={searchRecipes} />
+
       {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
-      
-      <div>
+
+      {error && <p>P{error}</p>}
+
+      <div className='container px-6 py-10 mx-auto'>
+        <div className='grid grid-cols-1 gap-8 mt-8 md:mt-16 md:grid-cols-2'>
         {recipes.map((recipe, index) => (
           <Recipe key={index} recipe={recipe} />
         ))}
+
+        </div>
       </div>
-    </div>
+ 
+    </section>
   );
 };
 
