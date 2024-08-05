@@ -1,13 +1,20 @@
-import React from 'react'
+"use client"
+import React from 'react';
+import { Layout, Typography } from 'antd';
+
+const { Header: AntHeader } = Layout;
+const { Title } = Typography;
 
 function Header() {
   return (
-    <header className='flex items-center justify-center min-w-screen bg-slate-300'>
-    <a className='text-3xl font-semibold text-gray-800 capitalize lg:text-4xl' href='/'>
-    Recipe Generator</a>
-    </header>
-   
-  )
+    <AntHeader style={{ background: '#f0f2f5', padding: '0 50px' }}>
+      <Title level={2} style={{ margin: 0, lineHeight: '64px' }}>
+        <a href="/" style={{ color: 'inherit' }}>
+          Recipe Generator
+        </a>
+      </Title>
+    </AntHeader>
+  );
 }
 
-export default Header
+export default Header;

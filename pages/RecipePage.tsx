@@ -1,14 +1,17 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
-import fetchRecipes from '../lib/fetchRecipes';
-import Recipe from '../components/Recipe';
-import { Recipe as RecipeType } from '@/types/types';
-import SearchBar from '@/components/SearchBar';
+import React, { useState } from "react";
+import { Layout, Row, Col, Spin, Alert } from 'antd';
+import { ErrorBoundary } from "react-error-boundary";
+import fetchRecipes from "../lib/fetchRecipes";
+import Recipe from "../components/Recipe";
+import { Recipe as RecipeType } from "@/types/types";
+import SearchBar from "@/components/SearchBar";
 
+const { Content } = Layout;
 
 const RecipePage: React.FC = () => {
-  const [query, setQuery] = useState<string>('');
+  const [query, setQuery] = useState<string>("");
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,30 +23,36 @@ const RecipePage: React.FC = () => {
       const results = await fetchRecipes(query);
       setRecipes(results);
     } catch (error) {
-      setError('Error fetching recipes');
+      setError("Error fetching recipes");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <section className="bg-white">
-      <SearchBar query={query} setQuery={setQuery} searchRecipes={searchRecipes} />
+    <Layout>
+      <Content style={{ padding: '0 50px' }}>
+        <SearchBar
+          query={query}
+          setQuery={setQuery}
+          searchRecipes={searchRecipes}
+        />
 
-      {loading && <p>Loading...</p>}
+        {loading && <Spin size="large" style={{ display: 'block', margin: '20px auto' }} />}
 
-      {error && <p>P{error}</p>}
+        {error && <Alert message={error} type="error" showIcon style={{ margin: '20px 0' }} />}
 
-      <div className='container px-6 py-10 mx-auto'>
-        <div className='grid grid-cols-1 gap-8 mt-8 md:mt-16 md:grid-cols-2'>
-        {recipes.map((recipe, index) => (
-          <Recipe key={index} recipe={recipe} />
-        ))}
-
-        </div>
-      </div>
- 
-    </section>
+        <ErrorBoundary fallback={<Alert message="Something went wrong" type="error" showIcon />}>
+          <Row gutter={[16, 16]}>
+            {recipes.map((recipe, index) => (
+              <Col xs={24} sm={12} md={8} lg={6} key={index}>
+                <Recipe recipe={recipe} />
+              </Col>
+            ))}
+          </Row>
+        </ErrorBoundary>
+      </Content>
+    </Layout>
   );
 };
 
