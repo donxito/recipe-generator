@@ -7,6 +7,7 @@ import fetchRecipes from "../lib/fetchRecipes";
 import Recipe from "../components/Recipe";
 import { Recipe as RecipeType } from "@/types/types";
 import SearchBar from "@/components/SearchBar";
+import RecipeList from "@/components/RecipeList";
 
 const { Content } = Layout;
 
@@ -15,6 +16,7 @@ const RecipePage: React.FC = () => {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  
 
   const searchRecipes = async () => {
     setLoading(true);
@@ -43,13 +45,7 @@ const RecipePage: React.FC = () => {
         {error && <Alert message={error} type="error" showIcon style={{ margin: '20px 0' }} />}
 
         <ErrorBoundary fallback={<Alert message="Something went wrong" type="error" showIcon />}>
-          <Row gutter={[16, 16]}>
-            {recipes.map((recipe, index) => (
-              <Col xs={24} sm={12} md={8} lg={6} key={index}>
-                <Recipe recipe={recipe} />
-              </Col>
-            ))}
-          </Row>
+         {recipes.length > 0 && <RecipeList recipes={recipes} />}
         </ErrorBoundary>
       </Content>
     </Layout>
