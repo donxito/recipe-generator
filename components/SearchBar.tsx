@@ -1,36 +1,43 @@
-import React from "react";
-import { motion } from 'framer-motion';
+"use client"
+
+import React from "react"
+import { motion } from 'framer-motion'
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Search } from "lucide-react"
 
 interface SearchBarProps {
   query: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
   searchRecipes: () => void;
+  handleKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
-function SearchBar({ query, setQuery, searchRecipes }: SearchBarProps) {
+function SearchBar({ query, setQuery, searchRecipes, handleKeyDown }: SearchBarProps) {
   return (
     <motion.div 
-      className="w-full max-w-3xl mx-auto mt-8 mb-12"
+      className="w-full max-w-3xl mx-auto mt-8 mb-12 px-4"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
       <div className="relative">
-        <input
+        <Input
           type="text"
-          placeholder="Enter ingredients (e.g: 'potatoes, garlic, celery')"
+          placeholder="Enter ingredients (e.g: 'pepper, garlic, celery, onion, tomato')"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full px-5 py-3 text-lg border-2 border-gray-300 rounded-full focus:outline-none focus:border-blue-500 transition duration-300"
+          onKeyDown={handleKeyDown}
+          className="pr-20"
         />
-        <button
+        <Button
           onClick={searchRecipes}
-          className="absolute right-2 top-2 px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition duration-300"
+          className="absolute right-0 top-0 h-full rounded-l-none"
         >
-          Search
-        </button>
+          <Search className="mr-2 h-4 w-4" /> Search
+        </Button>
       </div>
-      <p className="text-sm text-gray-500 mt-2 text-center">
+      <p className="text-sm text-muted-foreground mt-2 text-center">
         Try searching for multiple ingredients separated by commas
       </p>
     </motion.div>
