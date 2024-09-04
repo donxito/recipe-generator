@@ -1,5 +1,8 @@
 import axios from "axios"
 import { Recipe } from "@/types/types"
+import { generateRecipeId } from "./utils"
+import { v4 as uuidv4 } from 'uuid';
+
 
 // interface Recipe {
 //     label: string;
@@ -21,12 +24,14 @@ const fetchRecipes = async (query: string): Promise<Recipe[]> => {
 
     try {
         const response = await axios.get<FetchRecipesResponse>(url);
-        return response.data.hits.map(hit => hit.recipe);
+        return response.data.hits.map(hit => ({
+            ...hit.recipe,
+            id: uuidv4()
+        }));
 
     } catch (error) {
         console.error("Error fetching recipes:", error) 
         return []
-
     }
 }
 

@@ -43,7 +43,7 @@ const RecipeList: React.FC<RecipeListProps> = ({ recipes }) => {
             columnClassName="my-masonry-grid_column"
           >
             {recipes.map((recipe, index) => (
-              <Recipe key={index} recipe={recipe} />
+              <Recipe key={recipe.id} recipe={recipe} />
             ))}
           </Masonry>
         </>

@@ -11,6 +11,7 @@ export interface Ingredient {
   }
   
   export interface Recipe {
+    id: string
     label: string;
     image: string;
     source: string;
