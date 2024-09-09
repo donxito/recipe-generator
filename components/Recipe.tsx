@@ -10,7 +10,7 @@ import { motion } from "framer-motion"
 import FavoriteButton from "./FavoriteButton"
 
 interface RecipeProps {
-  recipe: RecipeType
+  recipe: RecipeType,
 }
 
 const Recipe: React.FC<RecipeProps> = ({ recipe }) => {
@@ -38,7 +38,7 @@ const Recipe: React.FC<RecipeProps> = ({ recipe }) => {
         <CardContent className="p-6">
           <div className="flex justify-between items-center mb-4">
             <CardTitle className="text-xl">Ingredients:</CardTitle>
-            <FavoriteButton recipeId={recipe.id} />
+            <FavoriteButton recipe={recipe} key={recipe.id} />
           </div>
           <ScrollArea className="h-40 w-full rounded-md border">
             <ul className="p-4">

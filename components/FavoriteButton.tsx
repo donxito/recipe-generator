@@ -4,12 +4,13 @@ import { Button } from './ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { supabase } from "@/lib/supabase"
 import { useRouter } from 'next/navigation'
+import { Recipe } from '@/types/types'
 
 interface FavoriteButtonProps {
-    recipeId: string
+    recipe: Recipe
 }
 
-function FavoriteButton({ recipeId }: FavoriteButtonProps) {
+function FavoriteButton({ recipe }: FavoriteButtonProps) {
     const [isFavorite, setIsFavorite] = useState(false)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const { toast } = useToast()
@@ -24,7 +25,7 @@ function FavoriteButton({ recipeId }: FavoriteButtonProps) {
                     .from('favorites')
                     .select()
                     .eq('user_id', user.id)
-                    .eq('recipe_id', recipeId)
+                    .eq('recipe_id', recipe.id)
                     .single()
                 
                 if (error && error.code !== 'PGRST116') {
@@ -35,7 +36,7 @@ function FavoriteButton({ recipeId }: FavoriteButtonProps) {
             }
         }
         checkAuth()
-    }, [recipeId])
+    }, [recipe.id])
 
     const toggleFavorite = async () => {
         if (!isLoggedIn) {
@@ -59,13 +60,17 @@ function FavoriteButton({ recipeId }: FavoriteButtonProps) {
                     .from('favorites')
                     .delete()
                     .eq('user_id', user.id)
-                    .eq('recipe_id', recipeId)
+                    .eq('recipe_id', recipe.id)
                 
                 if (error) throw error
             } else {
                 const { error } = await supabase
                     .from('favorites')
-                    .insert({ user_id: user.id, recipe_id: recipeId })
+                    .insert({ 
+                        user_id: user.id, 
+                        recipe_id: recipe.id,
+                        recipe_data: recipe // store the entire recipe object
+                    })
                 
                 if (error) throw error
             }
@@ -75,6 +80,7 @@ function FavoriteButton({ recipeId }: FavoriteButtonProps) {
                 title: isFavorite ? "Removed from favorites" : "Added to favorites",
                 description: isFavorite ? "The recipe has been removed from your favorites" : "The recipe has been added to your favorites",
             })
+            router.refresh() // refresh the page to update the favorite list
         } catch (error) {
             console.error('Error toggling favorite:', error)
             toast({

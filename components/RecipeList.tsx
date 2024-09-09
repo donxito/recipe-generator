@@ -1,8 +1,7 @@
-import React from 'react'
-import Masonry from 'react-masonry-css'
-import { Recipe as RecipeType } from '@/types/types'
-import Recipe from './Recipe'
-
+import React from "react";
+import Masonry from "react-masonry-css";
+import { Recipe as RecipeType } from "@/types/types";
+import Recipe from "./Recipe";
 
 const masonryStyles = `
 .my-masonry-grid {
@@ -20,34 +19,35 @@ const masonryStyles = `
 `;
 
 interface RecipeListProps {
-    recipes: RecipeType[];
+  recipes: RecipeType[];
 }
 
 const RecipeList: React.FC<RecipeListProps> = ({ recipes }) => {
+  const breakpointColumnsObj = {
+    default: 4,
+    1100: 3,
+    700: 2,
+    500: 1,
+  };
 
-    const breakpointColumnsObj = {
-        default: 4,
-        1100: 3,
-        700: 2,
-        500: 1
-    }
+  return (
+    <>
+      <style>{masonryStyles}</style>
+      <Masonry
+        breakpointCols={breakpointColumnsObj}
+        className="my-masonry-grid"
+        columnClassName="my-masonry-grid_column"
+      >
+        {recipes.map((recipe, index) =>
+          recipe && recipe.id ? (
+            <Recipe key={recipe.id} recipe={recipe} />
+          ) : (
+            <div key={index}>Invalid recipe data</div>
+          )
+        )}
+      </Masonry>
+    </>
+  );
+};
 
-    
-
-    return (
-        <>
-          <style>{masonryStyles}</style>
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
-          >
-            {recipes.map((recipe, index) => (
-              <Recipe key={recipe.id} recipe={recipe} />
-            ))}
-          </Masonry>
-        </>
-      );
-    };
-
-export default RecipeList
+export default RecipeList;

@@ -4,15 +4,6 @@ import { generateRecipeId } from "./utils"
 import { v4 as uuidv4 } from 'uuid';
 
 
-// interface Recipe {
-//     label: string;
-//     image: string;
-//     source: string;
-//     url: string;
-//     ingredients: string[];
-//     instructions: string;
-//   }
-
 interface FetchRecipesResponse {
   hits: { recipe: Recipe }[]
 }

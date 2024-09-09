@@ -7,18 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
 
-const titles = [
-  "NextBite",
-  "TailwindTastes",
-  "ShadcnSavor",
-  "ReactoRecipe",
-  "DevDish",
-  "CodedCuisine",
-  "StackSnack",
-  "ByteBite",
-  "QueryCuisine"
-]
-
 function Header() {
   return (
     <header className="bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md">
