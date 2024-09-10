@@ -3,9 +3,14 @@
 import React from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu } from "lucide-react"
+import { Button } from '@/components/ui/button'
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { Menu } from 'lucide-react'
+import ThemeToggle from './ThemeToggle'
 
 function Header() {
   return (
@@ -21,28 +26,15 @@ function Header() {
           </Link>
         </motion.div>
         
+        <div className="flex items-center space-x-4">
         <nav className="hidden md:block">
           <ul className="flex space-x-4">
-            <motion.li
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <Button variant="ghost" asChild>
-                <Link href="/favorites">Favorites</Link>
-              </Button>
-            </motion.li>
-            <motion.li
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Button variant="ghost" asChild>
-                <Link href="/about">About</Link>
-              </Button>
-            </motion.li>
+            <NavItem href="/favorites" label="Favorites" />
+            <NavItem href="/about" label="About" />
           </ul>
         </nav>
+        <ThemeToggle />
+        </div>
 
         <Sheet>
           <SheetTrigger asChild>
@@ -51,18 +43,28 @@ function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent>
-            <nav className="flex flex-col space-y-4 mt-6">
-              <Link href="/favorites" className="text-lg font-medium">
-                Favorites
-              </Link>
-              <Link href="/about" className="text-lg font-medium">
-                About
-              </Link>
+            <nav className="flex flex-col space-y-4 mt-8">
+              <NavItem href="/favorites" label="Favorites" />
+              <NavItem href="/about" label="About" />
             </nav>
           </SheetContent>
         </Sheet>
       </div>
     </header>
+  )
+}
+
+function NavItem({ href, label }: { href: string; label: string }) {
+  return (
+    <motion.li
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Button variant="ghost" asChild>
+        <Link href={href}>{label}</Link>
+      </Button>
+    </motion.li>
   )
 }
 

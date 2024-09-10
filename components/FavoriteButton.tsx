@@ -69,7 +69,7 @@ function FavoriteButton({ recipe }: FavoriteButtonProps) {
                     .insert({ 
                         user_id: user.id, 
                         recipe_id: recipe.id,
-                        recipe_data: recipe // store the entire recipe object
+                        recipe_data: recipe
                     })
                 
                 if (error) throw error
@@ -80,7 +80,7 @@ function FavoriteButton({ recipe }: FavoriteButtonProps) {
                 title: isFavorite ? "Removed from favorites" : "Added to favorites",
                 description: isFavorite ? "The recipe has been removed from your favorites" : "The recipe has been added to your favorites",
             })
-            router.refresh() // refresh the page to update the favorite list
+            router.refresh()
         } catch (error) {
             console.error('Error toggling favorite:', error)
             toast({

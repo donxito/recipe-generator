@@ -1,13 +1,13 @@
 "use client"
 
 import React from "react"
-import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Recipe as RecipeType } from "@/types/types"
 import { motion } from "framer-motion"
 import FavoriteButton from "./FavoriteButton"
+import SafeImage from "./SafeImage"
 
 interface RecipeProps {
   recipe: RecipeType,
@@ -18,49 +18,35 @@ const Recipe: React.FC<RecipeProps> = ({ recipe }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="w-full max-w-sm mx-auto"
+      transition={{ duration: 0.3 }}
     >
-      <Card className="overflow-hidden transform transition-all duration-300 hover:scale-105">
-        <div className="relative h-48">
-          <Image
-            alt={recipe.label}
-            src={recipe.image}
-            layout="fill"
-            objectFit="cover"
-          />
-          <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-            <h3 className="text-white text-2xl font-bold text-center px-4 opacity-95">
-              {recipe.label}
-            </h3>
+      <Card className="h-full flex flex-col">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold truncate">{recipe.label}</CardTitle>
+        </CardHeader>
+        <CardContent className="flex-grow flex flex-col">
+          <div className="relative pb-[56.25%] mb-4">
+            <SafeImage
+              src={recipe.image}
+              alt={recipe.label}
+              fallbackSrc="/placeholder-image.jpg"
+              fill
+              className="object-cover rounded-md"
+            />
           </div>
-        </div>
-        <CardContent className="p-6">
-          <div className="flex justify-between items-center mb-4">
-            <CardTitle className="text-xl">Ingredients:</CardTitle>
-            <FavoriteButton recipe={recipe} key={recipe.id} />
-          </div>
-          <ScrollArea className="h-40 w-full rounded-md border">
-            <ul className="p-4">
+          <ScrollArea className="flex-grow h-40 mb-4">
+            <ul className="list-disc list-inside">
               {recipe.ingredients.map((ingredient, index) => (
-                <li key={index} className="py-2 border-b last:border-b-0">
-                  {ingredient.text}
-                </li>
+                <li key={index} className="text-sm mb-1">{ingredient.text}</li>
               ))}
             </ul>
           </ScrollArea>
-          <Button
-            className="mt-6 w-full"
-            asChild
-          >
-            <a
-              href={recipe.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              View Full Recipe
-            </a>
-          </Button>
+          <div className="flex justify-between items-center mt-auto">
+            <Button variant="outline" asChild>
+              <a href={recipe.url} target="_blank" rel="noopener noreferrer">View Recipe</a>
+            </Button>
+            <FavoriteButton recipe={recipe} />
+          </div>
         </CardContent>
       </Card>
     </motion.div>

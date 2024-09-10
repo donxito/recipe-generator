@@ -8,23 +8,42 @@ import SearchBar from "@/components/SearchBar";
 import RecipeList from "@/components/RecipeList";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const RecipePage: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(0);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   const searchRecipes = async () => {
     setLoading(true);
     setError(null);
+    setPage(0);
     try {
-      const results = await fetchRecipes(query);
+      const results = await fetchRecipes(query, 0);
       setRecipes(results);
+      setHasMore(results.length > 0);
     } catch (error) {
       setError("Error fetching recipes");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchMoreRecipes = async () => {
+    if (!hasMore) return;
+
+    try {
+      const nextPage = page + 1;
+      const results = await fetchRecipes(query, nextPage);
+      setRecipes(prevRecipes => [...prevRecipes, ...results]);
+      setPage(nextPage);
+      setHasMore(results.length > 0);
+    } catch (error) {
+      setError("Error fetching more recipes");
     }
   };
 
@@ -65,6 +84,11 @@ const RecipePage: React.FC = () => {
         }
       >
         {recipes.length > 0 && <RecipeList recipes={recipes} />}
+        {hasMore && !loading && (
+          <div className="flex justify-center my-8">
+            <Button onClick={fetchMoreRecipes}>Load More</Button>
+          </div>
+        )}
       </ErrorBoundary>
     </div>
   );

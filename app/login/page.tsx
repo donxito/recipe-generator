@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useToast } from '@/hooks/use-toast'
 
 function Login() {
     const [email, setEmail] = useState("")
@@ -15,6 +16,8 @@ function Login() {
     const [loading, setLoading] = useState(false)
     
     const router = useRouter();
+
+    const { toast } = useToast();
 
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault()
@@ -44,17 +47,29 @@ function Login() {
             const { error } = await supabase.auth.signUp({ email, password });
 
             if (error) throw error;
-            
-            alert("Check your email for the login link!")
+
+            toast({
+                title: "Success",
+                description: "You have successfully signed up",
+            })
+        
         } catch (error: any) {
             console.error("Error signing up:", error);
-            if (error.message.includes('Email rate limit exceeded')) {
-                setError('Too many sign-up attempts. Please try again later.')
-            } else {
-                setError(error.message || "An error occurred during sign up")
-            }
+            setError(error.message || "An error occurred during sign up")
         } finally {
             setLoading(false)
+        }
+    }
+
+    const handleGoogleLogin = async () => {
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: "google",
+            })
+            if (error) throw error;
+        } catch (error: any) {
+            console.error("Error signing in with Google:", error);
+            setError(error.message || "An error occurred during Google sign in")
         }
     }
 
@@ -101,6 +116,9 @@ function Login() {
                     </Button>
                     <Button onClick={handleSignUp} variant="outline" disabled={loading}>
                         {loading ? 'Loading...' : 'Sign Up'}
+                    </Button>
+                    <Button onClick={handleGoogleLogin} variant="outline" className='w-full'>
+                        Login with Google
                     </Button>
                 </CardFooter>
             </Card>

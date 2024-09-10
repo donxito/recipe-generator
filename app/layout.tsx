@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
-
-
+import ThemeProvider from "@/components/theme-provider";
 import Header from "@/components/header";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Recipe Generator",
+  title: "NextBite",
   description: "Check the ingredients that you have at home and search in this API for a recipe",
 };
 
@@ -21,10 +19,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        
+        <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+        >
         <Header />
         {children}
-        
+        </ThemeProvider>
         </body>
     </html>
   );
