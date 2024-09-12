@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect, useState} from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -9,10 +9,48 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { Menu } from 'lucide-react'
+import { Menu, LogOut, LogIn } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
+import { useSession, signIn, signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+
 
 function Header() {
+
+  const { data: session} = useSession()
+
+  const [isClient, setIsClient] = useState(false)
+
+  const router = useRouter()
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  const handleAuthAction = () => {
+    if (session) {
+      signOut()
+    } else {
+      router.push("/signin")
+    }
+  }
+
+  const AuthButton = () => (
+    <Button variant="ghost" onClick={handleAuthAction} className='flex items-center'>
+      {session ? (
+        <>
+          <LogOut className='mr-2 h-4 w-4' />
+          Logout
+        </>
+      ) : (
+        <>
+          <LogIn className='mr-2 h-4 w-4' />
+          Login
+        </>
+      )}
+    </Button>
+  )
+
   return (
     <header className="bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -31,6 +69,7 @@ function Header() {
           <ul className="flex space-x-4">
             <NavItem href="/favorites" label="Favorites" />
             <NavItem href="/about" label="About" />
+            {isClient && <li><AuthButton /></li>}
           </ul>
         </nav>
         <ThemeToggle />
@@ -62,7 +101,9 @@ function NavItem({ href, label }: { href: string; label: string }) {
       transition={{ duration: 0.5 }}
     >
       <Button variant="ghost" asChild>
-        <Link href={href}>{label}</Link>
+      <Link href={href} className="hover:text-yellow-300 transition duration-300">
+        {label}
+      </Link>
       </Button>
     </motion.li>
   )

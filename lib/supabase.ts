@@ -9,9 +9,11 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 export const signInWithGoogle = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
+        options: {
+            redirectTo: `${process.env.NEXTAUTH_URL}/api/auth/callback/google`
+        }
     })
-    return { data, error}
-    
+    return { data, error }
 }
 
 // ign in with email and password

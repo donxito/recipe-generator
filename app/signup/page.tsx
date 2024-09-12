@@ -1,46 +1,24 @@
 "use client"
 
 import React, { useState } from 'react'
-import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useToast } from '@/hooks/use-toast'
-import { signIn } from 'next-auth/react'
+import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
 
-function Login() {
+
+function SignUp() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
     
     const router = useRouter();
-
     const { toast } = useToast();
-
-    const handleLogin = async (event: React.FormEvent) => {
-        event.preventDefault()
-        setError(null)
-        setLoading(true)
-
-        try {
-            const result = await signIn('credentials', {
-                email,
-                password,
-                redirect: false,
-            });
-            if (result?.error) throw Error (result.error)
-            
-            router.push("/")
-        } catch (error: any) {
-            console.error("Error logging in:", error);
-            setError(error.message || "An error occurred during login")
-        } finally {
-            setLoading(false)
-        }
-    }
 
     const handleSignUp = async (event: React.FormEvent) => {
         event.preventDefault()
@@ -48,44 +26,38 @@ function Login() {
         setLoading(true)
 
         try {
-            const response = await fetch("/api/auth/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.message || "An error occurred during sign up");
-            }
-
-            toast({
-                title: "Success",
-                description: "You have successfully signed up",
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
             })
-        
+    
+            if (error) throw error
+    
+            if (data.user) {
+                toast({
+                    title: "Success",
+                    description: "You have successfully signed up. Please check your email to confirm your account.",
+                })
+                router.push("/signin")
+            } else {
+                throw new Error("Failed to create user")
+            }
         } catch (error: any) {
-            console.error("Error signing up:", error);
+            console.error("Error signing up:", error)
             setError(error.message || "An error occurred during sign up")
         } finally {
             setLoading(false)
         }
     }
 
-    const handleGoogleLogin = () => {
-        signIn('google', { callbackUrl: '/' })
-    }
-
     return (
         <div className="flex justify-center items-center h-screen">
             <Card className="w-[350px]">
                 <CardHeader>
-                    <CardTitle>Login / Sign Up</CardTitle>
+                    <CardTitle>Sign Up</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleLogin}>
+                    <form onSubmit={handleSignUp}>
                         <div className="grid w-full items-center gap-4">
                             <div className="flex flex-col space-y-1.5">
                                 <Input
@@ -115,20 +87,17 @@ function Login() {
                         </Alert>
                     )}
                 </CardContent>
-                <CardFooter className="flex justify-between">
-                    <Button onClick={handleLogin} disabled={loading}>
-                        {loading ? 'Loading...' : 'Login'}
-                    </Button>
-                    <Button onClick={handleSignUp} variant="outline" disabled={loading}>
+                <CardFooter className="flex flex-col space-y-2">
+                    <Button onClick={handleSignUp} disabled={loading} className="w-full">
                         {loading ? 'Loading...' : 'Sign Up'}
                     </Button>
-                    <Button onClick={handleGoogleLogin} variant="outline" className='w-full'>
-                        Login with Google
-                    </Button>
+                    <p className="text-sm text-center">
+                        Already have an account? <Link href="/signin" className="text-blue-500 hover:underline">Sign In</Link>
+                    </p>
                 </CardFooter>
             </Card>
         </div>
     )
 }
 
-export default Login
+export default SignUp

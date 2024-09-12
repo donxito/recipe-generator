@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import fetchRecipes from "../lib/fetchRecipes";
+import fetchRecipes from "../../lib/fetchRecipes";
 import { Recipe as RecipeType } from "@/types/types";
 import SearchBar from "@/components/SearchBar";
 import RecipeList from "@/components/RecipeList";
@@ -16,7 +16,7 @@ const RecipePage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState<number>(0);
-  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [hasMore, setHasMore] = useState<boolean>(false);
 
   const searchRecipes = async () => {
     setLoading(true);

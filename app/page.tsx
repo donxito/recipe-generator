@@ -1,5 +1,5 @@
 
-import RecipePage from "@/pages/RecipePage";
+import RecipePage from "./recipes/RecipePage";
 export default function Home() {
 
 
