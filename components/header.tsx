@@ -1,35 +1,57 @@
 "use client"
 
-import React, { useEffect, useState} from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet"
-import { Menu, LogOut, LogIn } from 'lucide-react'
-import ThemeToggle from './ThemeToggle'
-import { useSession, signIn, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import ThemeToggle from './ThemeToggle'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Menu, LogIn, LogOut } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { supabase, signOut } from '@/lib/supabase'
+import { useToast } from '@/hooks/use-toast'
 
+const NavItem = ({ href, label }: { href: string; label: string }) => (
+  <li>
+    <Link href={href} className="text-sm font-medium transition-colors hover:text-primary">
+      {label}
+    </Link>
+  </li>
+)
 
 function Header() {
-
-  const { data: session} = useSession()
-
+  const [session, setSession] = useState<any>(null)
   const [isClient, setIsClient] = useState(false)
-
   const router = useRouter()
+  const { toast } = useToast()
 
   useEffect(() => {
     setIsClient(true)
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session)
+    })
+
+    return () => {
+      authListener.subscription.unsubscribe()
+    }
   }, [])
 
-  const handleAuthAction = () => {
+  const handleAuthAction = async () => {
     if (session) {
-      signOut()
+      const error = await signOut()
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to sign out",
+          variant: "destructive",
+        })
+      } else {
+        toast({
+          title: "Success",
+          description: "You have been signed out",
+        })
+        router.push('/')
+      }
     } else {
       router.push("/signin")
     }
@@ -65,14 +87,14 @@ function Header() {
         </motion.div>
         
         <div className="flex items-center space-x-4">
-        <nav className="hidden md:block">
-          <ul className="flex space-x-4">
-            <NavItem href="/favorites" label="Favorites" />
-            <NavItem href="/about" label="About" />
-            {isClient && <li><AuthButton /></li>}
-          </ul>
-        </nav>
-        <ThemeToggle />
+          <nav className="hidden md:block">
+            <ul className="flex space-x-4">
+              <NavItem href="/favorites" label="Favorites" />
+              <NavItem href="/about" label="About" />
+              {isClient && <li><AuthButton /></li>}
+            </ul>
+          </nav>
+          <ThemeToggle />
         </div>
 
         <Sheet>
@@ -85,27 +107,12 @@ function Header() {
             <nav className="flex flex-col space-y-4 mt-8">
               <NavItem href="/favorites" label="Favorites" />
               <NavItem href="/about" label="About" />
+              {isClient && <AuthButton />}
             </nav>
           </SheetContent>
         </Sheet>
       </div>
     </header>
-  )
-}
-
-function NavItem({ href, label }: { href: string; label: string }) {
-  return (
-    <motion.li
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <Button variant="ghost" asChild>
-      <Link href={href} className="hover:text-yellow-300 transition duration-300">
-        {label}
-      </Link>
-      </Button>
-    </motion.li>
   )
 }
 

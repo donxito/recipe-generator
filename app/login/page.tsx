@@ -1,14 +1,13 @@
 "use client"
 
 import React, { useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase, signInWithEmail, signInWithGoogle } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useToast } from '@/hooks/use-toast'
-import { signIn } from 'next-auth/react'
 
 function Login() {
     const [email, setEmail] = useState("")
@@ -17,7 +16,6 @@ function Login() {
     const [loading, setLoading] = useState(false)
     
     const router = useRouter();
-
     const { toast } = useToast();
 
     const handleLogin = async (event: React.FormEvent) => {
@@ -26,13 +24,13 @@ function Login() {
         setLoading(true)
 
         try {
-            const result = await signIn('credentials', {
-                email,
-                password,
-                redirect: false,
-            });
-            if (result?.error) throw Error (result.error)
+            const { data, error } = await signInWithEmail(email, password)
+            if (error) throw error
             
+            toast({
+                title: "Success",
+                description: "You have successfully logged in",
+            })
             router.push("/")
         } catch (error: any) {
             console.error("Error logging in:", error);
@@ -42,47 +40,28 @@ function Login() {
         }
     }
 
-    const handleSignUp = async (event: React.FormEvent) => {
-        event.preventDefault()
-        setError(null)
+    const handleGoogleLogin = async () => {
         setLoading(true)
-
         try {
-            const response = await fetch("/api/auth/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.message || "An error occurred during sign up");
-            }
-
+            const { error } = await signInWithGoogle()
+            if (error) throw error
             toast({
                 title: "Success",
-                description: "You have successfully signed up",
+                description: "You have successfully logged in with Google",
             })
-        
+            router.push("/")
         } catch (error: any) {
-            console.error("Error signing up:", error);
-            setError(error.message || "An error occurred during sign up")
+            setError(error.message || "An error occurred during Google login")
         } finally {
             setLoading(false)
         }
-    }
-
-    const handleGoogleLogin = () => {
-        signIn('google', { callbackUrl: '/' })
     }
 
     return (
         <div className="flex justify-center items-center h-screen">
             <Card className="w-[350px]">
                 <CardHeader>
-                    <CardTitle>Login / Sign Up</CardTitle>
+                    <CardTitle>Login</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleLogin}>
@@ -115,15 +94,12 @@ function Login() {
                         </Alert>
                     )}
                 </CardContent>
-                <CardFooter className="flex justify-between">
-                    <Button onClick={handleLogin} disabled={loading}>
+                <CardFooter className="flex flex-col space-y-2">
+                    <Button onClick={handleLogin} disabled={loading} className="w-full">
                         {loading ? 'Loading...' : 'Login'}
                     </Button>
-                    <Button onClick={handleSignUp} variant="outline" disabled={loading}>
-                        {loading ? 'Loading...' : 'Sign Up'}
-                    </Button>
-                    <Button onClick={handleGoogleLogin} variant="outline" className='w-full'>
-                        Login with Google
+                    <Button onClick={handleGoogleLogin} variant="outline" className="w-full" disabled={loading}>
+                        {loading ? 'Loading...' : 'Login with Google'}
                     </Button>
                 </CardFooter>
             </Card>

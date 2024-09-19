@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 
 // POST: add a recipe to favorites
 export async function POST(req: Request) {
-    const { recipeId } = await req.json();
+    const { recipeId, recipeData } = await req.json();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
     const { data, error } = await supabase
         .from("favorites")
-        .upsert({ user_id: user.id, recipe_id: recipeId })
+        .upsert({ user_id: user.id, recipe_id: recipeId, recipe_data: recipeData })
         .select();
 
     if (error) {
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
 // DELETE: remove a recipe from favorites
 export async function DELETE(req: Request) {
     const { recipeId } = await req.json();
-    const { data: { user} } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
         return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
@@ -40,16 +40,16 @@ export async function DELETE(req: Request) {
         .delete()
         .match({ user_id: user.id, recipe_id: recipeId });
 
-        if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 });
-        }
+    if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
-        return NextResponse.json({ sucess: true });
+    return NextResponse.json({ success: true });
 }
 
 // GET: get favorites
 export async function GET(req: Request) {
-    const { data: { user} } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
         return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
@@ -64,5 +64,5 @@ export async function GET(req: Request) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ favorites: data.map( fav => fav.recipe_id) });
+    return NextResponse.json({ favorites: data.map(fav => fav.recipe_id) });
 }

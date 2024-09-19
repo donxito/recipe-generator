@@ -1,5 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
-
 "use client";
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -7,18 +5,17 @@ import RecipeList from "@/components/RecipeList";
 import { Recipe } from "@/types/types";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 function Favorites() {
   const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
-
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchFavorites() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
         toast({
@@ -26,6 +23,7 @@ function Favorites() {
           description: "Please log in to view your favorites",
           variant: "destructive",
         });
+        router.push('/login');
         return;
       }
 
@@ -42,21 +40,20 @@ function Favorites() {
           variant: "destructive",
         });
       } else {
-       // filter out invaid recipes
-       const validRecipes = favorites
-        .map((favorite) => favorite.recipe_data)
-        .filter((recipe): recipe is Recipe => 
-            recipe !== null && typeof recipe === "object" && 
-            "label" in recipe && 
-            "id" in recipe
-        );
+        const validRecipes = favorites
+          .map((favorite) => favorite.recipe_data)
+          .filter((recipe): recipe is Recipe => 
+              recipe !== null && typeof recipe === "object" && 
+              "label" in recipe && 
+              "id" in recipe
+          );
         setFavoriteRecipes(validRecipes);
       }
       setLoading(false);
     }
 
     fetchFavorites();
-  }, [toast]);
+  }, [toast, router]);
 
   if (loading) {
     return (
@@ -69,7 +66,7 @@ function Favorites() {
   if (!favoriteRecipes.length) {
     return (
       <div className="text-center mt-8">
-        <p className="text-lg text-gray-600">You haven't added any favorite recipes yet.</p>
+        <p className="text-lg text-gray-600">You haven&apos;t added any favorite recipes yet.</p>
         <p className="text-md text-gray-500 mt-2">Start exploring and save some recipes!</p>
       </div>
     );
