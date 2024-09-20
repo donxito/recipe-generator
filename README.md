@@ -4,7 +4,6 @@
 
 Recipe Generator is a modern web application designed to help users discover delicious recipes based on the ingredients they have at home. This project showcases full-stack development skills, combining a robust backend with a sleek, responsive frontend.
 
-![Recipe Generator Screenshot](https://path-to-your-screenshot.png)
 
 ### 🌟 Key Features
 
@@ -83,12 +82,6 @@ Contributions are what make the open source community such an amazing place to l
 ## 📜 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
-
-## 📞 Contact
-
-Your Name - [@your_twitter](https://twitter.com/your_twitter) - email@example.com
-
-Project Link: [https://github.com/your_username/recipe-generator](https://github.com/your_username/recipe-generator)
 
 ## 🙏 Acknowledgements
 
