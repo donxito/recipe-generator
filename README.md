@@ -94,7 +94,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ##  Screenshots
 
 <img width="2056" alt="Screenshot 2024-09-20 at 14 51 20" src="https://github.com/user-attachments/assets/b0bb1564-e1c1-4207-b1b8-5c390b6c6f77">
-<img width="2022" alt="Screenshot 2024-09-20 at 14 06 30" src="https://github.com/user-attachments/assets/b346d932-26ae-4de3-9f79-7c4a9cf19205">
+<img width="2056" alt="Screenshot 2024-09-20 at 14 54 37" src="https://github.com/user-attachments/assets/4908b6d0-378a-41cc-8e15-d97e5b41daa0">
 <img width="2022" alt="Screenshot 2024-09-20 at 14 48 45" src="https://github.com/user-attachments/assets/04acf6c1-e94b-4d45-80ff-e5071d1c7cbd">
 <img width="2022" alt="Screenshot 2024-09-20 at 14 48 53" src="https://github.com/user-attachments/assets/8cdaeac3-67fc-4573-b91d-545bfe6e4b24">
 
