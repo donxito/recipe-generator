@@ -42,7 +42,7 @@ export default function Home() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <p>Turn your ingredients into culinary masterpieces with Recipe Generator</p>
+            <p>Turn your ingredients into culinary masterpieces with this recipe API</p>
           </MotionDiv>
           <MotionDiv
             initial={{ opacity: 0, y: 20 }}
@@ -56,7 +56,7 @@ export default function Home() {
 
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Recipe Generator?</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Why Choose NexBite?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <FeatureItem 
               icon={<Search className="w-6 h-6" />}
