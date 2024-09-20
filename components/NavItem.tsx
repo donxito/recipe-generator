@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 function NavItem({ href, label, icon, isActive }: { href: string, label: string, icon: React.ReactNode, isActive: boolean }) {
   return (
-    <li>
+    <li className="list-none">
     <motion.div
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}

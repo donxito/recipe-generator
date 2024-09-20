@@ -114,7 +114,7 @@ function Header() {
 
         <div className="flex items-center space-x-4">
           <nav className="hidden md:block">
-          <ul className="flex space-x-4">
+          <ul className="flex space-x-4 list-none">
               <NavItem
                 href="/"
                 label="Home"
