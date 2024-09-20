@@ -1,8 +1,8 @@
-# Recipe Generator
+# NextBite
 
 ## 🍳 About The Project
 
-Recipe Generator is a modern web application designed to help users discover delicious recipes based on the ingredients they have at home. This project showcases full-stack development skills, combining a robust backend with a sleek, responsive frontend.
+NextBite is a modern web application designed to help users discover delicious recipes based on the ingredients they have at home. This project showcases full-stack development skills, combining a robust backend with a sleek, responsive frontend.
 
 
 ### 🌟 Key Features
