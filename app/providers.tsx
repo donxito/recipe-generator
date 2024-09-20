@@ -1,17 +1,18 @@
 'use client'
 
 import { ThemeProvider } from 'next-themes'
-import { AuthProvider } from '@/components/AuthProvider'
-import { SessionProvider } from 'next-auth/react'
-
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { SessionContextProvider } from '@supabase/auth-helpers-react'
+import { useState } from 'react'
 
 export function Providers({ children }: { children: React.ReactNode }) {
+  const [supabaseClient] = useState(() => createClientComponentClient())
+
   return (
-    <AuthProvider>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem 
-      disableTransitionOnChange>
-        <SessionProvider>{children}</SessionProvider>
+    <SessionContextProvider supabaseClient={supabaseClient}>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        {children}
       </ThemeProvider>
-    </AuthProvider>
+    </SessionContextProvider>
   )
 }

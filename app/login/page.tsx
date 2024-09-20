@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useToast } from '@/hooks/use-toast'
-
 function Login() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -43,20 +42,18 @@ function Login() {
     const handleGoogleLogin = async () => {
         setLoading(true)
         try {
-            const { error } = await signInWithGoogle()
-            if (error) throw error
-            toast({
-                title: "Success",
-                description: "You have successfully logged in with Google",
-            })
-            router.push("/")
+          const { error } = await signInWithGoogle()
+          if (error) throw error
+          // The user will be redirected to Google's sign-in page
         } catch (error: any) {
-            setError(error.message || "An error occurred during Google login")
+          console.error('Google sign in failed', error)
+          setError(error.message || 'Something went wrong')
         } finally {
-            setLoading(false)
+          setLoading(false)
         }
-    }
+      }
 
+      
     return (
         <div className="flex justify-center items-center h-screen">
             <Card className="w-[350px]">
@@ -106,5 +103,4 @@ function Login() {
         </div>
     )
 }
-
 export default Login
