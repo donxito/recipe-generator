@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Search } from "lucide-react"
-import { last } from "lodash"
 
 interface SearchBarProps {
   query: string;
@@ -20,10 +19,8 @@ const commonIngredients = [
 ];
 
 function SearchBar({ query, setQuery, searchRecipes, handleKeyDown }: SearchBarProps) {
+  const [suggestions, setSuggestions] = useState<string[]>([]);
 
-  const [suggestions, setSuggestions] = useState<string[]>([])
-
-  // Autocomplete suggestions for the last ingredient in the query
   useEffect(() => {
     const lastIngredient = query.split(',').pop()?.trim().toLowerCase() || "";
     if (lastIngredient.length > 1) {
@@ -34,11 +31,8 @@ function SearchBar({ query, setQuery, searchRecipes, handleKeyDown }: SearchBarP
     } else {
       setSuggestions([])
     }
-  },[query])
+  }, [query])
 
-
-
-  // Add the selected suggestion to the query and clear the suggestions
   const handleSuggestionClick = (suggestion: string) => {
     const ingredients = query.split(',').map(ingredient => ingredient.trim());
     ingredients.pop();
@@ -47,7 +41,6 @@ function SearchBar({ query, setQuery, searchRecipes, handleKeyDown }: SearchBarP
     setSuggestions([])
   }
 
-
   return (
     <motion.div 
       className="w-full max-w-3xl mx-auto mt-8 mb-12 px-4"
@@ -55,28 +48,37 @@ function SearchBar({ query, setQuery, searchRecipes, handleKeyDown }: SearchBarP
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="relative">
-        <Input
-          type="text"
-          placeholder="Enter ingredients (e.g: 'pepper, garlic, celery, onion, tomato')"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="pr-20 text-white placeholder:text-gray-300"
-        />
-        <Button
-          onClick={searchRecipes}
-          className="absolute right-0 top-0 h-full rounded-l-none"
-        >
-          <Search className="mr-2 h-4 w-4" /> Search
-        </Button>
+      <div className="relative bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="flex">
+          <Input
+            type="text"
+            placeholder="Enter ingredients (e.g: pepper, garlic, celery)"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="flex-grow pr-20 border-none focus:ring-0 text-gray-800 placeholder:text-gray-400"
+          />
+          <Button
+            onClick={searchRecipes}
+            className="absolute right-0 top-0 h-full rounded-l-none bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+          >
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="flex items-center"
+            >
+              <Search className="mr-2 h-4 w-4" />
+              Search
+            </motion.div>
+          </Button>
+        </div>
         <AnimatePresence>
           {suggestions.length > 0 && (
             <motion.ul
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute z-10 w-full bg-background border border-input rounded-md mt-1 shadow-lg"
+              className="absolute z-10 w-full bg-white border-t border-gray-200 rounded-b-md shadow-lg"
             >
               {suggestions.map((suggestion, index) => (
                 <motion.li
@@ -85,7 +87,7 @@ function SearchBar({ query, setQuery, searchRecipes, handleKeyDown }: SearchBarP
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
                   onClick={() => handleSuggestionClick(suggestion)}
-                  className="px-4 py-2 hover:bg-accent cursor-pointer"
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-800"
                 >
                   {suggestion}
                 </motion.li>
@@ -94,7 +96,7 @@ function SearchBar({ query, setQuery, searchRecipes, handleKeyDown }: SearchBarP
           )}
         </AnimatePresence>
       </div>
-      <p className="text-sm text-muted-foreground mt-2 text-center text-white">
+      <p className="text-sm text-white mt-2 text-center">
         Try searching for multiple ingredients separated by commas
       </p>
     </motion.div>
