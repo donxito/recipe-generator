@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { supabase, signInWithEmail, signInWithGoogle } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -42,16 +42,30 @@ function Login() {
     const handleGoogleLogin = async () => {
         setLoading(true)
         try {
-          const { error } = await signInWithGoogle()
-          if (error) throw error
-          // The user will be redirected to Google's sign-in page
+            const { error } = await signInWithGoogle()
+            if (error) throw error
+            // The toast and redirect will be handled by the auth state change listener
         } catch (error: any) {
-          console.error('Google sign in failed', error)
-          setError(error.message || 'Something went wrong')
-        } finally {
-          setLoading(false)
+            setError(error.message || "An error occurred during Google login")
+            setLoading(false)
         }
-      }
+    }
+
+    useEffect(() => {
+        const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN') {
+                toast({
+                    title: "Success",
+                    description: "You have successfully logged in",
+                })
+                router.push("/")
+            }
+        })
+
+        return () => {
+            authListener.subscription.unsubscribe()
+        }
+    }, [router, toast])
 
       
     return (
