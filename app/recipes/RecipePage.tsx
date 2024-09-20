@@ -7,8 +7,8 @@ import { Recipe as RecipeType } from "@/types/types";
 import SearchBar from "@/components/SearchBar";
 import RecipeList from "@/components/RecipeList";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import LoadingContainer from "@/components/LoadingContainer";
 
 const RecipePage: React.FC = () => {
   const [query, setQuery] = useState<string>("");
@@ -62,34 +62,30 @@ const RecipePage: React.FC = () => {
         handleKeyDown={handleKeyDown}
       />
 
-      {loading && (
-        <div className="flex justify-center my-8">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      )}
-
-      {error && (
-        <Alert variant="destructive" className="my-4">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      <ErrorBoundary
-        fallback={
+      <LoadingContainer isLoading={loading}>
+        {error && (
           <Alert variant="destructive" className="my-4">
             <AlertTitle>Error</AlertTitle>
-            <AlertDescription>Something went wrong</AlertDescription>
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
-        }
-      >
-        {recipes.length > 0 && <RecipeList recipes={recipes} />}
-        {hasMore && !loading && (
-          <div className="flex justify-center my-8">
-            <Button onClick={fetchMoreRecipes}>Load More</Button>
-          </div>
         )}
-      </ErrorBoundary>
+
+        <ErrorBoundary
+          fallback={
+            <Alert variant="destructive" className="my-4">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>Something went wrong</AlertDescription>
+            </Alert>
+          }
+        >
+          {recipes.length > 0 && <RecipeList recipes={recipes} />}
+          {hasMore && !loading && (
+            <div className="flex justify-center my-8">
+              <Button onClick={fetchMoreRecipes}>Load More</Button>
+            </div>
+          )}
+        </ErrorBoundary>
+      </LoadingContainer>
     </div>
   );
 };

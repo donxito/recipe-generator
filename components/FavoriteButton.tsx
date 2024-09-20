@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Heart } from 'lucide-react'
 import { Recipe } from '@/types/types'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface FavoriteButtonProps {
   recipe: Recipe
@@ -13,6 +14,7 @@ interface FavoriteButtonProps {
 function FavoriteButton({ recipe }: FavoriteButtonProps) {
   const [isFavorite, setIsFavorite] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
 
@@ -48,6 +50,9 @@ function FavoriteButton({ recipe }: FavoriteButtonProps) {
       router.push('/login')
       return
     }
+
+    setIsAnimating(true)
+    setTimeout(() => setIsAnimating(false), 1000)
 
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -95,14 +100,62 @@ function FavoriteButton({ recipe }: FavoriteButtonProps) {
     }
   }
 
+  const heartVariants = {
+    inactive: { scale: 1 },
+    active: { scale: 1.2 },
+  }
+
+  const burstVariants = {
+    inactive: { scale: 0, opacity: 0 },
+    active: {
+      scale: [0, 1.5, 0],
+      opacity: [0, 1, 0],
+      transition: { duration: 0.5 }
+    }
+  }
+
   return (
     <Button
       variant="outline"
       size="icon"
       onClick={toggleFavorite}
       aria-label={isLoggedIn ? (isFavorite ? "Remove from favorites" : "Add to favorites") : "Login to favorite"}
+      className="relative"
     >
-      <Heart className={`h-4 w-4 ${isFavorite && isLoggedIn ? "fill-current text-red-500" : ""}`} />
+      <motion.div
+        variants={heartVariants}
+        animate={isAnimating ? "active" : "inactive"}
+      >
+        <Heart className={`h-4 w-4 ${isFavorite && isLoggedIn ? "fill-current text-red-500" : ""}`} />
+      </motion.div>
+      <AnimatePresence>
+        {isAnimating && (
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            variants={burstVariants}
+            initial="inactive"
+            animate="active"
+            exit="inactive"
+          >
+            {[...Array(6)].map((_, index) => (
+              <motion.div
+                key={index}
+                className="absolute inset-0 w-1 h-1 bg-red-500 rounded-full"
+                style={{
+                  rotate: index * 60,
+                  originY: "50%",
+                  top: "50%",
+                }}
+                animate={{
+                  scaleY: [0, 2, 0],
+                  opacity: [0, 1, 0],
+                }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+              />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Button>
   )
 }
